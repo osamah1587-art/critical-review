@@ -147,6 +147,15 @@ function buildCG(){
     for(var i=0;i<bs.length;i++)bs[i].classList.add("on");
   });
   g.appendChild(a);
+  var nb=document.createElement("button");
+  nb.className="cb";
+  nb.textContent="None";
+  nb.addEventListener("click",function(){
+    sel=new Set();
+    var bs=document.querySelectorAll(".cb");
+    for(var i=0;i<bs.length;i++)bs[i].classList.remove("on");
+  });
+  g.appendChild(nb);
   for(var i=0;i<CATS.length;i++){
     var cat=CATS[i],n=CC[cat]||0;
     if(!n)continue;
@@ -155,8 +164,18 @@ function buildCG(){
       b.className="cb on";
       b.textContent=cat+" ("+n+")";
       b.addEventListener("click",function(){
-        if(sel.has(cat)){sel.delete(cat);b.classList.remove("on");}
-        else{sel.add(cat);b.classList.add("on");}
+        if(sel.has(cat)&&sel.size===1){
+          // Only one selected - expand back to all
+          sel=new Set(CATS);
+          var bs=document.querySelectorAll(".cb");
+          for(var i=0;i<bs.length;i++)bs[i].classList.add("on");
+        } else {
+          // Select only this category
+          sel=new Set([cat]);
+          var bs=document.querySelectorAll(".cb");
+          for(var i=0;i<bs.length;i++)bs[i].classList.remove("on");
+          b.classList.add("on");
+        }
       });
       g.appendChild(b);
     })(cat,n);
