@@ -211,9 +211,30 @@ function loadQ(){
   if(q.imgs&&q.imgs.length){
     var qImgs=q.imgs.filter(function(s){return s.indexOf('cloudfront')!==-1&&s.toLowerCase().indexOf('answer')===-1;});
     if(!qImgs.length) qImgs=[q.imgs[0]];
-    var h='<img id="main-qimg-'+qi+'" src="'+qImgs[0]+'" onclick="openLB(this.src)" onerror="imgErr(this)">';
-    if(qImgs.length>1){ h+='<div class="img-thumbs">'; qImgs.forEach(function(src,i){ h+='<img class="img-thumb'+(i===0?' active':'')+'" src="'+src+'" onclick="switchImg(this,''+src+'','main-qimg-'+qi+'')">'; }); h+='</div>'; }
-    viewer.innerHTML=h; viewer.style.display='block';
+    viewer.innerHTML='';
+    var mainImg=document.createElement('img');
+    mainImg.id='main-qimg-'+qi;
+    mainImg.src=qImgs[0];
+    mainImg.onclick=function(){openLB(this.src);};
+    mainImg.onerror=function(){imgErr(this);};
+    viewer.appendChild(mainImg);
+    if(qImgs.length>1){
+      var thumbs=document.createElement('div');
+      thumbs.className='img-thumbs';
+      qImgs.forEach(function(src,ti){
+        var t=document.createElement('img');
+        t.className='img-thumb'+(ti===0?' active':'');
+        t.src=src;
+        t.onclick=(function(s,mid){return function(){
+          var m=document.getElementById(mid); if(m) m.src=s;
+          document.querySelectorAll('.img-thumb').forEach(function(x){x.classList.remove('active');});
+          this.classList.add('active');
+        };})(src,'main-qimg-'+qi);
+        thumbs.appendChild(t);
+      });
+      viewer.appendChild(thumbs);
+    }
+    viewer.style.display='block';
   } else { viewer.innerHTML=''; viewer.style.display='none'; }
   document.getElementById('q-body').innerHTML=formatQ(q.q);
   document.getElementById('a-body').textContent=q.a;
@@ -263,7 +284,18 @@ function revealAns(){
   if(q.imgs&&q.imgs.length>1){
     var ai=q.imgs.filter(function(s){return s.toLowerCase().indexOf('answer')!==-1;});
     if(!ai.length) ai=q.imgs.slice(1);
-    if(ai.length){ var w=document.getElementById('ans-img-wrap'); w.innerHTML=ai.map(function(src){return '<img src="'+src+'" onclick="openLB(this.src)" onerror="imgErr(this)">';}).join(''); w.style.display='block'; }
+    if(ai.length){
+      var w=document.getElementById('ans-img-wrap');
+      w.innerHTML='';
+      ai.forEach(function(src){
+        var img=document.createElement('img');
+        img.src=src;
+        img.onclick=function(){openLB(this.src);};
+        img.onerror=function(){imgErr(this);};
+        w.appendChild(img);
+      });
+      w.style.display='block';
+    }
   }
   document.getElementById('ans-box').classList.add('show');
   document.getElementById('btn-reveal').style.display='none';
