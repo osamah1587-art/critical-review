@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Crit-IQ Data Interpretation</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Crit-IQ">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#00b4d8">
+<style>
+:root{--bg:#0d1117;--sur:#161b22;--brd:#21262d;--tl:#00b4d8;--rd:#f85149;--gn:#3fb950;--yw:#d29922;--tx:#e6edf3;--mt:#8b949e}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--tx);font-family:system-ui,sans-serif;min-height:100vh}
+#hdr{background:var(--sur);border-bottom:1px solid var(--brd);padding:12px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+#hdr h1{font-family:monospace;font-size:13px;color:var(--tl);letter-spacing:.08em;text-transform:uppercase}
+#hm{font-family:monospace;font-size:12px;color:var(--mt)}
+#pb{height:3px;background:var(--brd)}#pf{height:100%;background:var(--tl);transition:width .3s;width:0}
+#main{max-width:800px;margin:0 auto;padding:24px 16px 80px}
+#ss{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:80vh;gap:20px;text-align:center}
+.lb{font-family:monospace;font-size:36px;font-weight:700;color:var(--tl)}
+.ls{font-family:monospace;font-size:11px;color:var(--mt);letter-spacing:.15em;text-transform:uppercase;margin-top:4px}
+.srow{display:flex;gap:1px;background:var(--brd);border:1px solid var(--brd);border-radius:8px;overflow:hidden}
+.sc{background:var(--sur);padding:12px 18px;text-align:center;min-width:85px}
+.sv{font-family:monospace;font-size:24px;font-weight:700;color:var(--tl)}
+.sl{font-size:11px;color:var(--mt);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.fs{width:100%;max-width:600px}
+.fl{font-family:monospace;font-size:11px;color:var(--mt);text-transform:uppercase;letter-spacing:.1em;margin-bottom:8px;text-align:left}
+.cg{display:flex;flex-wrap:wrap;gap:6px}
+.cb{background:var(--sur);border:1px solid var(--brd);color:var(--mt);padding:6px 12px;font-family:monospace;font-size:11px;cursor:pointer;border-radius:4px}
+.cb.on{border-color:var(--tl);color:var(--tl);background:rgba(0,180,216,.08)}
+.mr{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.mb{background:var(--sur);border:1px solid var(--brd);color:var(--mt);padding:7px 16px;font-family:monospace;font-size:12px;cursor:pointer;border-radius:4px}
+.mb.on{border-color:var(--tl);color:var(--tl);background:rgba(0,180,216,.08)}
+.bgo{background:var(--tl);color:#000;border:none;padding:12px 44px;font-family:monospace;font-size:14px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;border-radius:4px}
+#sq{display:none}
+.qh{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;flex-wrap:wrap;gap:8px}
+.qn{font-family:monospace;font-size:12px;color:var(--mt)}
+.qtg{font-family:monospace;font-size:11px;padding:3px 10px;border-radius:3px;border:1px solid var(--brd);color:var(--mt)}
+.hb{background:none;border:1px solid var(--brd);color:var(--mt);padding:5px 10px;font-family:monospace;font-size:11px;cursor:pointer;border-radius:4px}
+.iv{margin-bottom:14px;text-align:center}
+.iv img{width:100%;max-width:580px;border-radius:8px;border:1px solid var(--brd);cursor:zoom-in;display:block;margin:0 auto;loading:lazy}
+.it{display:flex;gap:6px;justify-content:center;margin-top:8px;flex-wrap:wrap}
+.ith{width:56px;height:42px;object-fit:cover;border-radius:4px;border:2px solid var(--brd);cursor:pointer;opacity:.6}
+.ith.on{border-color:var(--tl);opacity:1}
+.qc{background:var(--sur);border:1px solid var(--brd);border-radius:8px;padding:22px;margin-bottom:14px}
+.qt{font-size:14px;line-height:1.8;color:var(--tx)}
+.lt{width:100%;border-collapse:collapse;margin:14px 0;font-family:monospace;font-size:13px;border:1px solid var(--brd)}
+.lt th{background:rgba(0,180,216,.12);color:var(--tl);padding:8px 12px;text-align:left;border-bottom:1px solid rgba(0,180,216,.3);font-weight:700}
+.lt td{padding:7px 12px;border-bottom:1px solid var(--brd);color:var(--tx)}
+.lt tr:last-child td{border-bottom:none}
+.ab{background:rgba(63,185,80,.04);border:1px solid rgba(63,185,80,.25);border-radius:8px;padding:20px;margin-bottom:14px;display:none}
+.ab.show{display:block}
+.al{font-family:monospace;font-size:11px;color:var(--gn);text-transform:uppercase;letter-spacing:.1em;margin-bottom:12px}
+.ai img{width:100%;max-width:580px;border-radius:8px;border:1px solid rgba(63,185,80,.3);cursor:zoom-in;display:block;margin:0 auto 8px}
+.at{font-size:14px;line-height:1.8;white-space:pre-wrap;color:var(--tx)}
+.br{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.btn{padding:10px 20px;font-family:monospace;font-size:13px;font-weight:700;cursor:pointer;border-radius:4px;border:none}
+.brv{background:var(--tl);color:#000}.bnx,.bfn{background:var(--sur);color:var(--tx);border:1px solid var(--brd)}
+.sr{display:flex;gap:8px;align-items:center;font-family:monospace;font-size:12px;color:var(--mt);flex-wrap:wrap;margin-top:8px}
+.bsg{padding:7px 14px;font-family:monospace;font-size:12px;font-weight:700;cursor:pointer;border-radius:4px;border:1px solid rgba(63,185,80,.5);color:var(--gn);background:transparent}
+.bsm{padding:7px 14px;font-family:monospace;font-size:12px;font-weight:700;cursor:pointer;border-radius:4px;border:1px solid rgba(248,81,73,.5);color:var(--rd);background:transparent}
+#sr2{display:none}
+.rh{text-align:center;margin-bottom:28px}.rh h2{font-family:monospace;font-size:26px;color:var(--tl);margin-bottom:4px}.rh p{color:var(--mt);font-size:13px}
+.bs2{text-align:center;margin:20px 0}.sn{font-family:monospace;font-size:60px;font-weight:700;line-height:1}.sp{font-family:monospace;font-size:18px;color:var(--mt);margin-top:4px}
+.sg{color:var(--gn)}.sm{color:var(--yw)}.sb{color:var(--rd)}
+.cr{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--brd)}
+.cn{width:110px;font-family:monospace;font-size:11px;color:var(--mt)}.bw{flex:1;height:5px;background:var(--brd);border-radius:3px;overflow:hidden}.bb{height:100%;border-radius:3px}.cs{font-family:monospace;font-size:11px;width:50px;text-align:right}
+.ri{display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--brd);font-size:13px}
+.dot{width:7px;height:7px;border-radius:50%;margin-top:4px;flex-shrink:0}.dg{background:var(--gn)}.dr{background:var(--rd)}.dn{background:var(--mt)}
+.brst{background:var(--tl);color:#000;border:none;padding:12px 44px;font-family:monospace;font-size:14px;font-weight:700;cursor:pointer;border-radius:4px;display:block;margin:28px auto 0}
+#lbox{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.95);z-index:9999;align-items:center;justify-content:center}
+#lbox.show{display:flex}#lbox img{max-width:96vw;max-height:90vh;border-radius:6px}
+#lboxc{position:absolute;top:14px;right:18px;color:#fff;font-size:30px;cursor:pointer;font-family:monospace;line-height:1}
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:#00b4d8;color:#000;padding:11px 24px;border-radius:8px;font-family:monospace;font-size:13px;font-weight:700;cursor:pointer;z-index:9999;white-space:nowrap}
+@media(max-width:580px){#main{padding:16px 12px 60px}.sn{font-size:44px}}
+</style></head><body>
+<div id="hdr"><h1>Crit-IQ // Data Interpretation</h1><div id="hm">529 questions</div></div>
+<div id="pb"><div id="pf"></div></div>
+<div id="main">
+<div id="ss">
+  <div><div class="lb">Data Interpretation</div><div class="ls">Crit-IQ &mdash; 529 Questions</div></div>
+  <div class="srow">
+    <div class="sc"><div class="sv">529</div><div class="sl">Questions</div></div>
+    <div class="sc"><div class="sv" id="bd">&#8212;</div><div class="sl">Best %</div></div>
+    <div class="sc"><div class="sv" id="dd">0</div><div class="sl">Reviewed</div></div>
+  </div>
+  <div class="fs"><div class="fl">Category</div><div class="cg" id="cg"></div></div>
+  <div class="fs"><div class="fl" style="margin-bottom:8px">Mode</div>
+    <div class="mr">
+      <button class="mb on" id="mbseq">Sequential</button>
+      <button class="mb" id="mbrnd">Random</button>
+      <button class="mb" id="mbwrg">Review Wrong</button>
+    </div></div>
+  <button class="bgo" id="bstart">Start Session</button>
+  <div style="font-size:11px;color:var(--mt);font-family:monospace">Source: Crit-IQ</div>
+</div>
+<div id="sq">
+  <div class="qh"><button class="hb" id="bhome">&larr; Home</button><span class="qn" id="qnl">Q1/529</span><span class="qtg" id="qct">ABG</span></div>
+  <div class="qc"><div class="iv" id="qiv" style="display:none"></div><div class="qt" id="qb"></div></div>
+  <div class="ab" id="abox"><div class="al">Model Answer</div><div class="ai" id="aiv" style="display:none"></div><div class="at" id="atx"></div></div>
+  <div class="br"><button class="btn brv" id="brvl">View Answer</button><button class="btn bnx" id="bnxt" style="display:none">Next &rarr;</button><button class="btn bfn" id="bfin" style="display:none">Finish</button></div>
+  <div class="sr" id="sarow"></div>
+</div>
+<div id="sr2">
+  <div class="rh"><h2>Complete</h2><p id="rsub"></p></div>
+  <div class="bs2"><div class="sn" id="rnum"></div><div class="sp" id="rpct"></div></div>
+  <div id="rcat"></div>
+  <div style="font-family:monospace;font-size:11px;color:var(--mt);text-transform:uppercase;margin:20px 0 12px">Review</div>
+  <div id="rrev"></div>
+  <button class="brst" id="bnew">New Session</button>
+</div></div>
+<div id="lbox"><div id="lboxc">&#10005;</div><img id="lbimg" src="" alt=""></div>
+<script src="critiq_data.js"></script>
+<script>
+(function(){
+var Q=CRITIQ_DATA;
+var CATS=["ABG","ECG","CXR","X-Ray","CT Brain","CT Chest","CT Abdomen","CT","Echo","Biochemistry","Haematology","MRI","Ultrasound","Waveforms","Equipment","Clinical Photo","Vital Signs","Clinical"];
+var CC={};for(var i=0;i<Q.length;i++){var c=Q[i].cat;CC[c]=(CC[c]||0)+1;}
+var sel=new Set(CATS),mode="seq",que=[],idx=0,sc={},ss={};
+
+function ld(){
+  try{
+    var s=localStorage.getItem("cs");if(s)sc=JSON.parse(s);
+    var b=localStorage.getItem("cb");if(b)document.getElementById("bd").textContent=b+"%";
+    document.getElementById("dd").textContent=Object.keys(sc).length;
+  }catch(e){}
+}
+function sv(){try{localStorage.setItem("cs",JSON.stringify(sc));}catch(e){}}
+
+function buildCG(){
+  var g=document.getElementById("cg");
+  g.innerHTML="";
+  var a=document.createElement("button");
+  a.className="cb on";
+  a.textContent="All";
+  a.addEventListener("click",function(){
+    sel=new Set(CATS);
+    var bs=document.querySelectorAll(".cb");
+    for(var i=0;i<bs.length;i++)bs[i].classList.add("on");
+  });
+  g.appendChild(a);
+  for(var i=0;i<CATS.length;i++){
+    var cat=CATS[i],n=CC[cat]||0;
+    if(!n)continue;
+    (function(cat,n){
+      var b=document.createElement("button");
+      b.className="cb on";
+      b.textContent=cat+" ("+n+")";
+      b.addEventListener("click",function(){
+        if(sel.has(cat)){sel.delete(cat);b.classList.remove("on");}
+        else{sel.add(cat);b.classList.add("on");}
+      });
+      g.appendChild(b);
+    })(cat,n);
+  }
+}
+
+document.getElementById("mbseq").addEventListener("click",function(){mode="seq";document.getElementById("mbseq").classList.add("on");document.getElementById("mbrnd").classList.remove("on");document.getElementById("mbwrg").classList.remove("on");});
+document.getElementById("mbrnd").addEventListener("click",function(){mode="rnd";document.getElementById("mbseq").classList.remove("on");document.getElementById("mbrnd").classList.add("on");document.getElementById("mbwrg").classList.remove("on");});
+document.getElementById("mbwrg").addEventListener("click",function(){mode="wrg";document.getElementById("mbseq").classList.remove("on");document.getElementById("mbrnd").classList.remove("on");document.getElementById("mbwrg").classList.add("on");});
+
+document.getElementById("bstart").addEventListener("click",function(){
+  ss={};
+  var p=[];
+  for(var i=0;i<Q.length;i++){if(sel.has(Q[i].cat))p.push(i);}
+  if(!p.length){alert("No questions match selection");return;}
+  if(mode==="rnd")p.sort(function(){return Math.random()-.5;});
+  else if(mode==="wrg"){var w=p.filter(function(i){return sc[i]===0;});if(w.length)p=w;}
+  que=p;idx=0;
+  document.getElementById("ss").style.display="none";
+  document.getElementById("sq").style.display="block";
+  loadQ();
+});
+document.getElementById("bhome").addEventListener("click",function(){goHome();});
+document.getElementById("brvl").addEventListener("click",function(){reveal();});
+document.getElementById("bnxt").addEventListener("click",function(){idx++;loadQ();});
+document.getElementById("bfin").addEventListener("click",function(){finish();});
+document.getElementById("bnew").addEventListener("click",function(){goHome();});
+document.getElementById("lbox").addEventListener("click",function(){document.getElementById("lbox").classList.remove("show");});
+
+function openLB(src){document.getElementById("lbimg").src=src;document.getElementById("lbox").classList.add("show");}
+
+function loadQ(){
+  var qi=que[idx],q=Q[qi];
+  document.getElementById("qnl").textContent="Q"+(idx+1)+"/"+que.length;
+  document.getElementById("pf").style.width=((idx/que.length)*100)+"%";
+  document.getElementById("qct").textContent=q.cat;
+  var iv=document.getElementById("qiv");
+  iv.innerHTML="";
+  if(q.imgs&&q.imgs.length){
+    var qi2=[];
+    for(var i=0;i<q.imgs.length;i++){
+      var s=q.imgs[i];
+      if(s.indexOf("cloudfront")!==-1&&s.toLowerCase().indexOf("answer")===-1)qi2.push(s);
+    }
+    if(!qi2.length&&q.imgs.length)qi2=[q.imgs[0]];
+    if(qi2.length){
+      var mi=document.createElement("img");
+      mi.src=qi2[0];mi.id="mi"+qi;mi.loading="lazy";
+      mi.addEventListener("click",function(){openLB(this.src);});
+      mi.addEventListener("error",function(){iv.style.display="none";});
+      iv.appendChild(mi);
+      if(qi2.length>1){
+        var tr=document.createElement("div");tr.className="it";
+        for(var i=0;i<qi2.length;i++){
+          (function(src,i,qi){
+            var th=document.createElement("img");
+            th.className="ith"+(i===0?" on":"");
+            th.src=src;th.loading="lazy";
+            th.addEventListener("click",function(){
+              var m=document.getElementById("mi"+qi);if(m)m.src=src;
+              var ths=tr.querySelectorAll(".ith");
+              for(var j=0;j<ths.length;j++)ths[j].classList.remove("on");
+              th.classList.add("on");
+            });
+            tr.appendChild(th);
+          })(qi2[i],i,qi);
+        }
+        iv.appendChild(tr);
+      }
+      iv.style.display="block";
+    }else{iv.style.display="none";}
+  }else{iv.style.display="none";}
+  document.getElementById("qb").innerHTML=fmtQ(q.q);
+  document.getElementById("atx").textContent=q.a;
+  document.getElementById("aiv").innerHTML="";
+  document.getElementById("aiv").style.display="none";
+  document.getElementById("abox").classList.remove("show");
+  document.getElementById("brvl").style.display="inline-block";
+  document.getElementById("bnxt").style.display="none";
+  document.getElementById("bfin").style.display="none";
+  document.getElementById("sarow").innerHTML="";
+  document.getElementById("sarow").style.display="none";
+}
+
+function esc(t){return String(t).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");}
+
+function fmtQ(txt){
+  var mi=txt.lastIndexOf("\nMedia\n");
+  if(mi!==-1)txt=txt.substring(0,mi);
+  var ni=txt.indexOf("\nNew Search");
+  if(ni!==-1)txt=txt.substring(0,ni);
+  txt=txt.split("\u00a0").join(" ");
+  if(txt.indexOf("\t")!==-1){
+    var ls=txt.split("\n"),pre=[],tr=[],post=[],inT=false;
+    for(var i=0;i<ls.length;i++){
+      if(ls[i].indexOf("\t")!==-1&&ls[i].trim()){inT=true;tr.push(ls[i]);}
+      else if(inT&&tr.length>1){post=ls.slice(i);break;}
+      else if(!inT){pre.push(ls[i]);}
+    }
+    if(tr.length>1){
+      var c0=tr[0].split("\t").map(function(c){return c.trim();}).filter(Boolean);
+      var hdrs=["Variable","Value","Range","FiO2","pH","pO2","pCO2","Na","K","Result","Normal","Test"];
+      var isH=false;
+      for(var i=0;i<c0.length&&!isH;i++)for(var j=0;j<hdrs.length&&!isH;j++)if(c0[i]===hdrs[j])isH=true;
+      var tbl='<table class="lt">';
+      if(isH){
+        tbl+='<thead><tr>';
+        for(var i=0;i<c0.length;i++)tbl+='<th>'+esc(c0[i])+'</th>';
+        tbl+='</tr></thead><tbody>';
+        for(var r=1;r<tr.length;r++){
+          var cs=tr[r].split("\t").map(function(c){return c.split("\u00a0").join("").trim();}).filter(Boolean);
+          if(cs.length){tbl+='<tr>';for(var i=0;i<cs.length;i++)tbl+='<td>'+esc(cs[i])+'</td>';tbl+='</tr>';}
+        }
+      }else{
+        tbl+='<thead><tr><th>Variable</th><th>Value</th><th>Reference</th></tr></thead><tbody>';
+        for(var r=0;r<tr.length;r++){
+          var cs=tr[r].split("\t").map(function(c){return c.split("\u00a0").join("").trim();}).filter(Boolean);
+          if(cs.length){tbl+='<tr>';for(var i=0;i<cs.length;i++)tbl+='<td>'+esc(cs[i])+'</td>';tbl+='</tr>';}
+        }
+      }
+      tbl+='</tbody></table>';
+      var pt=post.join("\n").trim();
+      return '<p style="white-space:pre-wrap;margin-bottom:10px">'+esc(pre.join("\n").trim())+'</p>'+tbl+(pt?'<p style="white-space:pre-wrap;margin-top:10px">'+esc(pt)+'</p>':"")
+    }
+  }
+  return '<p style="white-space:pre-wrap">'+esc(txt.trim())+'</p>';
+}
+
+function reveal(){
+  var qi=que[idx],q=Q[qi];
+  var aiv=document.getElementById("aiv");
+  aiv.innerHTML="";
+  if(q.imgs&&q.imgs.length>1){
+    var ai=[];
+    for(var i=0;i<q.imgs.length;i++)if(q.imgs[i].toLowerCase().indexOf("answer")!==-1)ai.push(q.imgs[i]);
+    if(!ai.length)ai=q.imgs.slice(1);
+    if(ai.length){
+      for(var i=0;i<ai.length;i++){
+        (function(src){
+          var img=document.createElement("img");
+          img.src=src;img.loading="lazy";
+          img.addEventListener("click",function(){openLB(src);});
+          img.addEventListener("error",function(){this.style.display="none";});
+          aiv.appendChild(img);
+        })(ai[i]);
+      }
+      aiv.style.display="block";
+    }
+  }
+  document.getElementById("abox").classList.add("show");
+  document.getElementById("brvl").style.display="none";
+  var sr=document.getElementById("sarow");
+  sr.innerHTML="";
+  var sp=document.createElement("span");sp.textContent="Self-assess:";sr.appendChild(sp);
+  var bg=document.createElement("button");bg.className="bsg";bg.innerHTML="&#10003; Got it";
+  bg.addEventListener("click",function(){mark(1);});sr.appendChild(bg);
+  var bm=document.createElement("button");bm.className="bsm";bm.innerHTML="&#10007; Missed";
+  bm.addEventListener("click",function(){mark(0);});sr.appendChild(bm);
+  sr.style.display="flex";
+  if(idx===que.length-1)document.getElementById("bfin").style.display="inline-block";
+  else document.getElementById("bnxt").style.display="inline-block";
+}
+
+function mark(ok){
+  var qi=que[idx];sc[qi]=ok;ss[qi]=ok;sv();
+  var sr=document.getElementById("sarow");sr.innerHTML="";
+  var sp=document.createElement("span");
+  sp.style.fontFamily="monospace";sp.style.fontSize="13px";
+  sp.style.color=ok?"var(--gn)":"var(--rd)";
+  sp.innerHTML=ok?"&#10003; Correct":"&#10007; Missed";
+  sr.appendChild(sp);
+}
+
+function finish(){
+  document.getElementById("sq").style.display="none";
+  document.getElementById("sr2").style.display="block";
+  var tot=que.length,att=Object.keys(ss).length,cor=0;
+  for(var k in ss)if(ss[k]===1)cor++;
+  var pct=att>0?Math.round((cor/att)*100):0;
+  var ne=document.getElementById("rnum");
+  ne.textContent=cor+"/"+att;
+  ne.className="sn "+(pct>=70?"sg":pct>=50?"sm":"sb");
+  document.getElementById("rpct").textContent=pct+"% correct";
+  document.getElementById("rsub").textContent=tot+" questions reviewed";
+  try{var prev=parseInt(localStorage.getItem("cb")||"0");if(pct>prev)localStorage.setItem("cb",String(pct));}catch(e){}
+  var cd={};
+  for(var i=0;i<que.length;i++){
+    var qi=que[i],cat=Q[qi].cat;
+    if(!cd[cat])cd[cat]={c:0,t:0};
+    cd[cat].t++;if(ss[qi]===1)cd[cat].c++;
+  }
+  var ck=Object.keys(cd).sort(function(a,b){return cd[b].t-cd[a].t;});
+  var bh='<div style="font-family:monospace;font-size:11px;color:var(--mt);text-transform:uppercase;margin-bottom:12px">By Category</div>';
+  for(var i=0;i<ck.length;i++){
+    var cat=ck[i],d=cd[cat];
+    var p=d.t>0?Math.round((d.c/d.t)*100):0;
+    var col=p>=70?"var(--gn)":p>=50?"var(--yw)":"var(--rd)";
+    bh+='<div class="cr"><div class="cn">'+cat+'</div><div class="bw"><div class="bb" style="width:'+p+'%;background:'+col+'"></div></div><div class="cs" style="color:'+col+'">'+d.c+"/"+d.t+'</div></div>';
+  }
+  document.getElementById("rcat").innerHTML=bh;
+  var rh="";
+  for(var i=0;i<que.length;i++){
+    var qi=que[i],r=ss[qi];
+    var dc=r===1?"dg":r===0?"dr":"dn";
+    var pv=Q[qi].q.split("\t").join(" ").substring(0,70).trim()+"...";
+    rh+='<div class="ri"><div class="dot '+dc+'"></div><span>Q'+(i+1)+": "+esc(pv)+"</span></div>";
+  }
+  document.getElementById("rrev").innerHTML=rh;
+}
+
+function goHome(){
+  document.getElementById("sr2").style.display="none";
+  document.getElementById("sq").style.display="none";
+  document.getElementById("ss").style.display="flex";
+  ld();
+}
+
+window.addEventListener("beforeinstallprompt",function(ev){
+  ev.preventDefault();
+  var b=document.createElement("div");
+  b.className="toast";
+  b.textContent="Add to Home Screen";
+  b.addEventListener("click",function(){ev.prompt();b.remove();});
+  document.body.appendChild(b);
+  setTimeout(function(){if(b.parentNode)b.remove();},12000);
+});
+
+buildCG();ld();
+})();
+</script></body></html>
